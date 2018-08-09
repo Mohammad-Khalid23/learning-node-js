@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 const crud = new Schema({
     name: {
         type: String,
-        lowercase: true
+        lowercase: true,
+        unique:true
     },
     fatherName: {
         type: String,

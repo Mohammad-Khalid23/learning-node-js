@@ -73,17 +73,18 @@ crudController.getOneCrud = (req, res, next) => {
 }
 
 crudController.getSortCrud = (req, res, next) => {
-    // let params = {}
-    // if (req.query.name != null) {
-    //     params.name = req.query.name
-    // }
-    // if (req.query.fatherName != null) {
-    //     params.fatherName = req.query.fatherName
-    // }
-    // if (req.query.roll != null) {
-    //     params.roll = req.query.roll
-    // }
-    Crud.find().sort({ name: 1 }).then(result => {
+    console.log(req.query, "Query")
+    let query = {}
+    if (req.query.sortWith) {
+        if (req.query.sortBy === 'asc') {
+            query[req.query.sortWith] = 1;
+        } else {
+            query[req.query.sortWith] = -1;
+        }
+    }
+
+    console.log(query, "Query Object")
+    Crud.find().sort(query).then(result => {
         if (result != null) {
             res.status(200).json({
                 message: 'Data get Successfully',
@@ -96,7 +97,7 @@ crudController.getSortCrud = (req, res, next) => {
             })
         }
     })
-        .then(err => {
+        .catch(err => {
             res.status(404).json({
                 message: 'Not Found',
                 error: err
