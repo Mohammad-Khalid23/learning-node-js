@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/cruddb',{ useNewUrlParser: true });
 
 mongoose.connection.on('connected', (db) =>{
-    console.log('Connected');
+    console.log('Connected to the Database');
 });
 
 mongoose.connection.on('error', (error) =>{
     console.log(error, 'error');
 });
 mongoose.connection.on('disconnected', () =>{
-    console.log('disconnected');
+    console.log('disconnected with database');
 });

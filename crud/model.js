@@ -2,16 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const crud = new Schema({
     name: {
-        type: String
+        type: String,
+        lowercase: true
     },
     fatherName: {
-        type: String
+        type: String,
+        lowercase: true
+
     },
-    roll:{
-        type:Number
-    },
-    date:{
-        type:String
+    roll: {
+        type: Number
     }
-});
+}, { timestamps: true });
 module.exports = mongoose.model('Crud', crud);

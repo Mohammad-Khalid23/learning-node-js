@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Crud = require('./models/crud');
+const Crud = require('./model');
 const mongoose = require('mongoose');
 
 const crudController = {};
@@ -72,6 +72,38 @@ crudController.getOneCrud = (req, res, next) => {
         })
 }
 
+crudController.getSortCrud = (req, res, next) => {
+    // let params = {}
+    // if (req.query.name != null) {
+    //     params.name = req.query.name
+    // }
+    // if (req.query.fatherName != null) {
+    //     params.fatherName = req.query.fatherName
+    // }
+    // if (req.query.roll != null) {
+    //     params.roll = req.query.roll
+    // }
+    Crud.find().sort({ name: 1 }).then(result => {
+        if (result != null) {
+            res.status(200).json({
+                message: 'Data get Successfully',
+                data: result
+            })
+        } else {
+            res.status(404).json({
+                message: 'Not such Crud Found in Db',
+                data: result
+            })
+        }
+    })
+        .then(err => {
+            res.status(404).json({
+                message: 'Not Found',
+                error: err
+            })
+        })
+}
+
 crudController.addCrud = (req, res, next) => {
     console.log(req.body, "body");
     if (req.body.name && req.body.fatherName && req.body.roll) {
@@ -79,8 +111,7 @@ crudController.addCrud = (req, res, next) => {
         let tempData = {
             name: req.body.name,
             fatherName: req.body.fatherName,
-            roll: req.body.roll,
-            date: new Date()
+            roll: req.body.roll
         }
         const crud = new Crud(tempData);
         crud.save().then(result => {
