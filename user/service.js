@@ -1,4 +1,6 @@
 const bcrypt = require('bcrypt');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('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');
 
 const service = {}
 service.hashPassword = (password) => {
@@ -15,4 +17,17 @@ service.comparePassword = (password, hash, cb) => {
         return cb(res, err)
     });
 }
+
+service.sendMail = (token) => {
+    console.log(token, "Token in send mail");
+    const msg = {
+        to: 'm.khalidayub95@gmail.com',
+        from: 'khalidayub2315@gmail.com',
+        subject: 'Reser your password',
+        link: token,
+        html: '<h2>Welcome to Learning Node</h2><div>Click Link Below to Reset your password</div><a href="www.google.com" target="_blank">Click to Reset Password</a>',
+    };
+    sgMail.send(msg);
+}
+
 module.exports = service;

@@ -14,8 +14,14 @@ const user = new Schema({
         type: String,
         required: true
     },
+    age: {
+        type: String
+    },
     access_token: {
         type: String
+    },
+    resetPasswordToken: {
+        type: String
     }
-},{timestamps: true});
+}, { timestamps: true });
 module.exports = mongoose.model('Users', user);
