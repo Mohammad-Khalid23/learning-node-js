@@ -67,7 +67,6 @@ userController.signup = (req, res, next) => {
         })
     }
 }
-
 userController.login = (req, res, next) => {
     console.log(req.body, "Body");
     if (req.body.email) {
@@ -122,7 +121,6 @@ userController.login = (req, res, next) => {
         })
     }
 }
-
 userController.forgotPassword = (req, res, next) => {
     User.findOneAndUpdate({ email: req.body.email }, { resetPasswordToken: generateToken() }, { new: true })
         .then(result => {
@@ -157,11 +155,29 @@ userController.resetPassword = (req, res, next) => {
             })
         })
 }
+userController.getProfile = (req, res, next) => {
+    console.log(req.params._id, "Id");
+    User.findById({ _id: req.params._id },{password:0}).then(result => {
+        res.status(200).json({
+            message: 'Get profile Successfully',
+            data: result
+        })
+    })
+        .catch(err => {
+            res.status(404).json({
+                message: "No Such user Find",
+                erro: err
+            })
+        })
+}
+
 
 generateToken = () => {
-    token = randtoken.generate(16);
-    console.log(token, "Token");
-    return token;
+    token1 = randtoken.generate(16);
+    token2 = randtoken.generate(16);
+    token3 = randtoken.generate(16);
+    console.log(token1 + token2 + token3, "Token");
+    return token1 + token2 + token3;
 }
 validatePassword = (password) => {
     var regex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
