@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
+sgMail.setApiKey('send grid api key will me here');
 
 const service = {}
 service.hashPassword = (password) => {
