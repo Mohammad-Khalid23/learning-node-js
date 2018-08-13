@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const crudRoutes = require('./crud/routes');
 const userRoutes = require('./user/routes');
+const uploadImage = require('./ImageUpload/route')
 const db = require('./db')
 
 const port = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 
 app.use('/crud', crudRoutes);
 app.use('/user', userRoutes);
+app.use('/uploadImage', uploadImage);
 
 // app.use((req, res, next) => {
 //     const error = new Error('Not Found');
