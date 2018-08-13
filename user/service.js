@@ -18,16 +18,27 @@ service.comparePassword = (password, hash, cb) => {
     });
 }
 
-service.sendMail = (token) => {
+service.sendMail = (to, from, msg, token) => {
     console.log(token, "Token in send mail");
-    const msg = {
-        to: 'm.khalidayub95@gmail.com',
-        from: 'khalidayub2315@gmail.com',
+    const resetPassword = {
+        to: to,
+        from: from,
         subject: 'Reser your password',
         link: token,
         html: '<h2>Welcome to Learning Node</h2><div>Click Link Below to Reset your password</div><a href="www.google.com" target="_blank">Click to Reset Password</a>',
     };
-    sgMail.send(msg);
+    const verifyEmail = {
+        to: to,
+        from: from,
+        subject: 'Confirm your Email',
+        link: token,
+        html: '<h2>Welcome to Learning Node</h2><div>Click Link Below to Reset your password</div><a href="www.google.com" target="_blank">Click to Reset Password</a>',
+    };
+    if (msg === 'verify') {
+        sgMail.send(verifyEmail);
+    } else {
+        sgMail.send(resetPassword);
+    }
 }
 
 module.exports = service;

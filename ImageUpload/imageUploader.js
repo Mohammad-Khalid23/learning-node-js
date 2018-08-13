@@ -1,7 +1,7 @@
 
 imageUpload = (req, res, next) => {
     console.log("Image Upload")
-    console.log(req.file.path, "File");
+    console.log(req.file, "File");
     if (req.file) {
         res.status(200).json({
             message: "Image Successfully Uploaded",
@@ -9,7 +9,7 @@ imageUpload = (req, res, next) => {
         })
     } else {
         res.status(400).json({
-            message: "Invalid Image Type"
+            message: "Invalid Image Type(must be jpeg or png)"
         })
     }
 }

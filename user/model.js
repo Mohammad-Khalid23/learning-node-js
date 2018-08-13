@@ -22,6 +22,12 @@ const user = new Schema({
     },
     resetPasswordToken: {
         type: String
+    },
+    active: {
+        type: Boolean
+    },
+    emailVerificationToken: {
+        type: String
     }
 }, { timestamps: true });
 module.exports = mongoose.model('Users', user);

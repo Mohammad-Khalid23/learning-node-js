@@ -3,43 +3,42 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('./model');
 const service = require('./service');
-var moment = require('moment');
-var randtoken = require('rand-token');
+const helper = require('../libs/helper');
 
 const userController = {};
 
 userController.signup = (req, res, next) => {
     console.log(req.body, "Body");
     if (req.body.email) {
-        if (validateEmail(req.body.email)) { //email validate
-            if (validateName(req.body.name)) { //name validate
-                if (validatePassword(req.body.password)) { //password validate
+        if (helper.validateEmail(req.body.email)) { //email validate
+            if (helper.validateName(req.body.name)) { //name validate
+                if (helper.validatePassword(req.body.password)) { //password validate
                     if (req.body.password === req.body.confirmPassword) { //match password
-                        if (validateDoB(req.body.dob)) { //date of birth validate
+                        if (helper.validateDoB(req.body.dob)) { //date of birth validate
                             let userData = {
                                 name: req.body.name,
                                 email: req.body.email,
-                                password: service.hashPassword(req.body.password)
+                                password: service.hashPassword(req.body.password),
+                                active: false
                             }
                             const user = new User(userData);
                             user.save().then(result => {
-                                res.status(200).json({
-                                    message: 'Succesfully Signup',
-                                    data: result
-                                })
+                                // res.status(200).json({
+                                //     message: 'Succesfully Signup',
+                                //     data: result
+                                // })
+                                next();
                             })
                                 .catch(err => {
                                     res.status(400).json({
                                         errot: err
                                     })
-
                                 })
                         } else {
                             res.status(400).json({
                                 message: "You are not Eligible for this please grow up and then come"
                             })
                         }
-
                     } else {
                         res.status(400).json({
                             message: "Password not match"
@@ -70,7 +69,7 @@ userController.signup = (req, res, next) => {
 userController.login = (req, res, next) => {
     console.log(req.body, "Body");
     if (req.body.email) {
-        if (validateEmail(req.body.email)) {
+        if (helper.validateEmail(req.body.email)) {
             User.findOne({ email: req.body.email }).then(result => {
                 console.log(result, "Result")
                 if (result != null) {
@@ -122,9 +121,9 @@ userController.login = (req, res, next) => {
     }
 }
 userController.forgotPassword = (req, res, next) => {
-    User.findOneAndUpdate({ email: req.body.email }, { resetPasswordToken: generateToken() }, { new: true })
+    User.findOneAndUpdate({ email: req.body.email }, { resetPasswordToken: helper.generateToken() }, { new: true })
         .then(result => {
-            service.sendMail(result.resetPasswordToken);
+            service.sendMail(result.email, 'khalidayub2315@gmail.com', 'reset', result.resetPasswordToken);
             res.status(200).json({
                 message: 'Check your email to reset your password',
                 // data: {
@@ -157,7 +156,7 @@ userController.resetPassword = (req, res, next) => {
 }
 userController.getProfile = (req, res, next) => {
     console.log(req.params._id, "Id");
-    User.findById({ _id: req.params._id },{password:0}).then(result => {
+    User.findById({ _id: req.params._id }, { password: 0 }).then(result => {
         res.status(200).json({
             message: 'Get profile Successfully',
             data: result
@@ -172,41 +171,42 @@ userController.getProfile = (req, res, next) => {
 }
 
 
-generateToken = () => {
-    token1 = randtoken.generate(16);
-    token2 = randtoken.generate(16);
-    token3 = randtoken.generate(16);
-    console.log(token1 + token2 + token3, "Token");
-    return token1 + token2 + token3;
+userController.emailVerification = (req, res, next) => {
+    User.findOneAndUpdate({ email: req.body.email }, { emailVerificationToken: helper.generateToken() }, { new: true })
+        .then(result => {
+            // service.sendMail(result.email, 'khalidayub2315@gmail.com', 'verify', result.emailVerificationToken);
+            res.status(200).json({
+                message: 'Signup Successfully,Check your email to verify your Account',
+                // data: {
+                //     emailVerificationToken: result.emailVerificationToken
+                // }
+                data: result
+            })
+            next();
+        })
+        .catch(err => {
+            res.status(400).json({
+                error: err
+            })
+        })
 }
-validatePassword = (password) => {
-    var regex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
-    return regex.test(password);
+
+userController.verifyAccount = (req, res, next) => {
+    console.log(req.body, "Request body");
+    User.findOneAndUpdate({ emailVerificationToken: req.body.emailVerificationToken }, { active: true, emailVerificationToken: null }, { new: true })
+        .then(result => {
+            res.status(200).json({
+                message: "Your Account has been Confirmed",
+                data: result
+            })
+        })
+        .catch(err => {
+            res.status(400).json({
+                error: err
+            })
+        })
 }
-validateName = (name) => {
-    var regexp = new RegExp(/^[a-z,',-]+(\s)[a-z,',-]+$/i);
-    return regexp.test(name)
-}
-validateEmail = (email) => {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-validateDoB = (date) => {
-    var currentTime = moment(new Date(), 'YYYY,MM,DD');
-    let dob = moment(new Date(date), 'YYYY,MM,DD');
-    var a = moment(currentTime);
-    var b = moment(dob);
-    console.log(a.diff(b, 'years'), "DIFFERANCE")
-    console.log(dob);
-    let diff = a.diff(b, 'years');
-    if (diff < 5) {
-        console.log("You are not eligible");
-        return false;
-    } else {
-        console.log("You are eligible");
-        return true;
-    }
-}
+
 
 
 module.exports = userController;
