@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
 const User = require('./model');
+const Session = require('../sessions/model')
 const service = require('./service');
 const helper = require('../libs/helper');
+var moment = require('moment');
 
 const userController = {};
 
@@ -75,7 +74,25 @@ userController.login = (req, res, next) => {
                 if (result != null) {
                     service.comparePassword(req.body.password, result.password, (password, err) => {
                         if (password) {
-                            User.findByIdAndUpdate({ _id: result._id }, { access_token: generateToken() }, { new: true })
+                            // var expireDate = new Date(moment(new Date(), "DD-MM-YYYY").add(10, 'days'));
+                            // let session = new Session({
+                            //     user_id: result._id,
+                            //     access_token: helper.generateToken(),
+                            //     expire: expireDate
+                            // })
+                            // session.save().then(response => {
+                            //     res.status(200).json({
+                            //         message: 'Login Successfully!',
+                            //         access_token: response.access_token,
+                            //         data: result
+                            //     })
+                            // })
+                            //     .catch(err => {
+                            //         res.status(400).json({
+                            //             error: err
+                            //         })
+                            //     })
+                            User.findByIdAndUpdate({ _id: result._id }, { access_token: helper.generateToken() }, { new: true })
                                 .then(response => {
                                     console.log(response, "Reswponse in n")
                                     res.status(200).json({
@@ -157,14 +174,22 @@ userController.resetPassword = (req, res, next) => {
 userController.getProfile = (req, res, next) => {
     console.log(req.params._id, "Id");
     User.findById({ _id: req.params._id }, { password: 0 }).then(result => {
-        res.status(200).json({
-            message: 'Get profile Successfully',
-            data: result
-        })
+        if (result) {
+            res.status(200).json({
+                message: 'Get profile Successfully',
+                data: result
+            })
+        } else {
+            res.status(404).json({
+                message: "No Such user Found",
+                data: result
+            })
+        }
+
     })
         .catch(err => {
             res.status(404).json({
-                message: "No Such user Find",
+                message: "No Such user Found",
                 erro: err
             })
         })
@@ -207,6 +232,17 @@ userController.verifyAccount = (req, res, next) => {
         })
 }
 
-
+saveSession = () => {
+    console.log(new Date(), "Date")
+    var new_date = new Date(moment(new Date(), "DD-MM-YYYY").add(5, 'days'));
+    var new_date1 = new Date(moment(new Date(), "DD-MM-YYYY").add(5, 'days'));
+    if (new_date === new_date1) {
+        console.log("Date Matched")
+    } else {
+        console.log("Date not Matched")
+    }
+    console.log(new_date, "NEw Date")
+    console.log(new_date1, "NEw Date")
+}
 
 module.exports = userController;
