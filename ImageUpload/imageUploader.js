@@ -68,31 +68,8 @@ module.exports.uploadImage = (req, res, next) => {
     }
 }
 module.exports.getImage = (req, res, next) => {
-    // var form = new FormData();
-    // form.append('u_field', 'my value');
-    // form.append('u_data', new Buffer(10));
-    // form.append('u_file', fileSystem.createReadStream('../uploads/' + req.params.image));
-    // console.log(form,"form Data");
-    // res.status(200).json({
-    //     image: form
-    // })
-    // var readStream = fileSystem.createReadStream(filePath);
-    // // We replaced all the event handlers with a simple call to readStream.pipe()
-    // readStream.pipe(response);
     var files = fileSystem.readdirSync('uploads/');
-    //read the image using fs and send the image content back in the response
-    fileSystem.readFile('uploads/' + files[0], function (err, content) {
-        if (err) {
-            res.writeHead(400, { 'Content-type': 'text/html' })
-            console.log(err);
-            res.end("No such image");
-        } else {
-            console.log(content, "IMage GDuyaeaFAdA+++++++++++++++++++++++++")
-            //specify the content type in the response will be an image
-            res.writeHead(200, { 'Content-type': 'image/jpg' });
-            res.end(content);
-        }
-    });
+    res.sendFile(path.join(__dirname, '../uploads', req.params.image))
     // console.log(req.params, "get image");
     // res.status(200).json({
     //     image: 'http://localhost:3000/image/getImage/' + req.params.image
