@@ -8,6 +8,7 @@ module.exports.createSession = (req, res, next) => {
 
 module.exports.checkSession = (req, res, next) => {
     let header = req.headers;
+    console.log(header,"Header++++++++++")
     if (header.authorization) {
         let token = header.authorization;
         session.findOne({ access_token: token }).then(result => {
@@ -31,7 +32,6 @@ module.exports.checkSession = (req, res, next) => {
                     error: err
                 })
             })
-        console.log(token, "TOKEN")
     } else {
         res.status(400).json({
             message: "Please send the Token in Header"

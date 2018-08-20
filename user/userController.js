@@ -4,9 +4,7 @@ const service = require('./service');
 const helper = require('../libs/helper');
 var moment = require('moment');
 
-const userController = {};
-
-userController.signup = (req, res, next) => {
+module.exports.signup = (req, res, next) => {
     console.log(req.body, "Body");
     if (req.body.email) {
         if (helper.validateEmail(req.body.email)) { //email validate
@@ -65,7 +63,7 @@ userController.signup = (req, res, next) => {
         })
     }
 }
-userController.login = (req, res, next) => {
+module.exports.login = (req, res, next) => {
     console.log(req.body, "Body");
     if (req.body.email) {
         if (helper.validateEmail(req.body.email)) {
@@ -74,38 +72,38 @@ userController.login = (req, res, next) => {
                 if (result != null) {
                     service.comparePassword(req.body.password, result.password, (password, err) => {
                         if (password) {
-                            // var expireDate = new Date(moment(new Date(), "DD-MM-YYYY").add(10, 'days'));
-                            // let session = new Session({
-                            //     user_id: result._id,
-                            //     access_token: helper.generateToken(),
-                            //     expire: expireDate
-                            // })
-                            // session.save().then(response => {
-                            //     res.status(200).json({
-                            //         message: 'Login Successfully!',
-                            //         access_token: response.access_token,
-                            //         data: result
-                            //     })
-                            // })
-                            //     .catch(err => {
-                            //         res.status(400).json({
-                            //             error: err
-                            //         })
-                            //     })
-                            User.findByIdAndUpdate({ _id: result._id }, { access_token: helper.generateToken() }, { new: true })
-                                .then(response => {
-                                    console.log(response, "Reswponse in n")
-                                    res.status(200).json({
-                                        message: 'Succesfully login',
-                                        data: response
-                                    })
+                            var expireDate = new Date(moment(new Date(), "DD-MM-YYYY").add(10, 'days'));
+                            let session = new Session({
+                                user_id: result._id,
+                                access_token: helper.generateToken(),
+                                expire: expireDate
+                            })
+                            session.save().then(response => {
+                                res.status(200).json({
+                                    message: 'Login Successfully!',
+                                    access_token: response.access_token,
+                                    data: result
                                 })
+                            })
                                 .catch(err => {
                                     res.status(400).json({
-                                        message: 'Error in update',
                                         error: err
                                     })
                                 })
+                            // User.findByIdAndUpdate({ _id: result._id }, { access_token: helper.generateToken() }, { new: true })
+                            //     .then(response => {
+                            //         console.log(response, "Reswponse in n")
+                            //         res.status(200).json({
+                            //             message: 'Succesfully login',
+                            //             data: response
+                            //         })
+                            //     })
+                            //     .catch(err => {
+                            //         res.status(400).json({
+                            //             message: 'Error in update',
+                            //             error: err
+                            //         })
+                            //     })
                         } else {
                             res.status(400).json({
                                 message: 'InCorrect Password'
@@ -137,7 +135,7 @@ userController.login = (req, res, next) => {
         })
     }
 }
-userController.forgotPassword = (req, res, next) => {
+module.exports.forgotPassword = (req, res, next) => {
     User.findOneAndUpdate({ email: req.body.email }, { resetPasswordToken: helper.generateToken() }, { new: true })
         .then(result => {
             service.sendMail(result.email, 'khalidayub2315@gmail.com', 'reset', result.resetPasswordToken);
@@ -154,7 +152,7 @@ userController.forgotPassword = (req, res, next) => {
             })
         })
 }
-userController.resetPassword = (req, res, next) => {
+module.exports.resetPassword = (req, res, next) => {
     console.log(req.body, "Request body");
     let newPassword = service.hashPassword(req.body.newPassword);
     console.log(newPassword, "neww Password")
@@ -171,7 +169,7 @@ userController.resetPassword = (req, res, next) => {
             })
         })
 }
-userController.getProfile = (req, res, next) => {
+module.exports.getProfile = (req, res, next) => {
     console.log(req.params._id, "Id");
     User.findById({ _id: req.params._id }, { password: 0 }).then(result => {
         if (result) {
@@ -195,8 +193,7 @@ userController.getProfile = (req, res, next) => {
         })
 }
 
-
-userController.emailVerification = (req, res, next) => {
+module.exports.emailVerification = (req, res, next) => {
     User.findOneAndUpdate({ email: req.body.email }, { emailVerificationToken: helper.generateToken() }, { new: true })
         .then(result => {
             // service.sendMail(result.email, 'khalidayub2315@gmail.com', 'verify', result.emailVerificationToken);
@@ -216,7 +213,7 @@ userController.emailVerification = (req, res, next) => {
         })
 }
 
-userController.verifyAccount = (req, res, next) => {
+module.exports.verifyAccount = (req, res, next) => {
     console.log(req.body, "Request body");
     User.findOneAndUpdate({ emailVerificationToken: req.body.emailVerificationToken }, { active: true, emailVerificationToken: null }, { new: true })
         .then(result => {
@@ -232,7 +229,7 @@ userController.verifyAccount = (req, res, next) => {
         })
 }
 
-saveSession = () => {
+module.exports.saveSession = () => {
     console.log(new Date(), "Date")
     var new_date = new Date(moment(new Date(), "DD-MM-YYYY").add(5, 'days'));
     var new_date1 = new Date(moment(new Date(), "DD-MM-YYYY").add(5, 'days'));
@@ -244,5 +241,3 @@ saveSession = () => {
     console.log(new_date, "NEw Date")
     console.log(new_date1, "NEw Date")
 }
-
-module.exports = userController;

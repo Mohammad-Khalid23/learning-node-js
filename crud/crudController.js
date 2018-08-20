@@ -3,9 +3,7 @@ const router = express.Router();
 const Crud = require('./model');
 const mongoose = require('mongoose');
 
-const crudController = {};
-
-crudController.getCrud = (req, res, next) => {
+module.exports.getCrud = (req, res, next) => {
     Crud.find().then(result => {
         res.status(200).json({
             message: 'Data get Successfully',
@@ -20,7 +18,7 @@ crudController.getCrud = (req, res, next) => {
         })
 }
 
-crudController.getCrudBetweenDates = (req, res, next) => {
+module.exports.getCrudBetweenDates = (req, res, next) => {
     Crud.find({
         "date": {
             $lte: req.query.enddate,
@@ -40,7 +38,7 @@ crudController.getCrudBetweenDates = (req, res, next) => {
         })
 }
 
-crudController.getOneCrud = (req, res, next) => {
+module.exports.getOneCrud = (req, res, next) => {
     let params = {}
     if (req.query.name != null) {
         params.name = req.query.name
@@ -72,7 +70,7 @@ crudController.getOneCrud = (req, res, next) => {
         })
 }
 
-crudController.getSortCrud = (req, res, next) => {
+module.exports.getSortCrud = (req, res, next) => {
     console.log(req.query, "Query")
     let query = {}
     if (req.query.sortWith) {
@@ -105,7 +103,7 @@ crudController.getSortCrud = (req, res, next) => {
         })
 }
 
-crudController.addCrud = (req, res, next) => {
+module.exports.addCrud = (req, res, next) => {
     console.log(req.body, "body");
     if (req.body.name && req.body.fatherName && req.body.roll) {
 
@@ -135,7 +133,7 @@ crudController.addCrud = (req, res, next) => {
     }
 }
 
-crudController.deleteCrud = (req, res, next) => {
+module.exports.deleteCrud = (req, res, next) => {
     let id = req.params._id;
     console.log(id, "id in Params");
     Crud.findOneAndRemove({ _id: id }).then(result => {
@@ -152,7 +150,7 @@ crudController.deleteCrud = (req, res, next) => {
         })
 }
 
-crudController.updateCrud = (req, res, next) => {
+module.exports.updateCrud = (req, res, next) => {
     let id = req.params._id;
     console.log(id, "id in Params");
     Crud.findOneAndUpdate({ _id: id }, req.body).then(result => {
@@ -169,7 +167,7 @@ crudController.updateCrud = (req, res, next) => {
         })
 }
 
-crudController.filterCrud = (req, res, next) => {
+module.exports.filterCrud = (req, res, next) => {
     let query = req.query;
     console.log(query, "query");
     res.status(200).json({
@@ -190,7 +188,7 @@ crudController.filterCrud = (req, res, next) => {
     // })
 }
 
-crudController.getCrudWithPagination = (req, res, next) => {
+module.exports.getCrudWithPagination = (req, res, next) => {
     var limit = req.query.limit || 5;
     console.log(req.query, "Querry")
     var page = req.query.page || 1;
@@ -215,4 +213,3 @@ crudController.getCrudWithPagination = (req, res, next) => {
             })
         })
 }
-module.exports = crudController;
