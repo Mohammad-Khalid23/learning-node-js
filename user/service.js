@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const passwordHash = require('password-hash');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey('send grid api key will me here');
@@ -6,12 +5,6 @@ sgMail.setApiKey('send grid api key will me here');
 const service = {}
 service.hashPassword = (password) => {
     console.log(password, "Password");
-    // Generate a salt
-    // var salt = bcrypt.genSaltSync(16);
-    // // Hash the password with the salt
-    // var hash = bcrypt.hashSync(password, salt);
-    // return hash;
-
     var hashpwd = passwordHash.generate(password);
     return hashpwd;
     console.log(hashpwd, "hash ===========>>>>>>>>>>");
@@ -19,9 +12,6 @@ service.hashPassword = (password) => {
 }
 
 service.comparePassword = (password, hash, cb) => {
-    // bcrypt.compare(password, hash, function (err, res) {
-    //     return cb(res, err)
-    // });
     if (passwordHash.verify(password, hash)) {
         return cb(true, null)
 

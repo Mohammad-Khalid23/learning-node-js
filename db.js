@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/cruddb',{ useNewUrlParser: true });
+mongoose.connect('mongodb://patient-tracker2:patient123@ds139984.mlab.com:39984/khalid-projects',{ useNewUrlParser: true });
 
 mongoose.connection.on('connected', (db) =>{
     console.log('Connected to the Database');

@@ -1,6 +1,6 @@
 FROM node:10-alpine
-WORKDIR /usr/nodelearnapp
-COPY . /usr/nodelearnapp
+WORKDIR /usr/nodeapp
+COPY . /usr/nodeapp
 RUN npm install
 CMD node server.js
 EXPOSE 3000

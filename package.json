@@ -2,10 +2,10 @@
   "name": "learning-node",
   "version": "1.0.0",
   "description": "Start learning node js",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "author": "Khalid",
   "license": "ISC",
@@ -22,5 +22,8 @@
     "nodemon": "^1.18.3",
     "password-hash": "^1.2.2",
     "rand-token": "^0.4.0"
+  },
+  "engines": {
+    "node": "8.10.0"
   }
 }
